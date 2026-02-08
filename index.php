@@ -1,62 +1,93 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+session_start();
+require_once 'database.php';
 
-require("database.php");
+$query = '
+    SELECT v.id, v.Make, v.Model, v.Year, v.Mileage,
+           v.vehicle_image AS image,
+           d.name AS dealership_name
+    FROM vehicles v
+    LEFT JOIN dealerships d ON v.dealership_id = d.id
+    ORDER BY v.Year DESC
+';
 
-$queryVehicles = 'SELECT Make, Model, Year, Mileage FROM vehicles ORDER BY Year DESC';
-$statement = $db->prepare($queryVehicles);
+$statement = $db->prepare($query);
 $statement->execute();
 $vehicles = $statement->fetchAll();
 $statement->closeCursor();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Vehicle Inventory - Home</title>
-    <link rel="stylesheet" type="text/css" href="css/vehicle.css" />
+    <link rel="stylesheet" type="text/css" href="css/vehicle.css">
 </head>
-
 <body>
+
 <?php include("header.php"); ?>
 
 <main>
-    <h2>Vehicle Inventory List</h2>
+    <h2>Vehicle Inventory</h2>
 
     <?php if (!empty($_SESSION['edit_success'])): ?>
-        <p style="color:green;"><?= $_SESSION['edit_success'] ?></p>
+        <p class="success-message"><?= htmlspecialchars($_SESSION['edit_success']) ?></p>
         <?php unset($_SESSION['edit_success']); ?>
     <?php endif; ?>
 
     <?php if (empty($vehicles)): ?>
-        <p>No vehicles found in the database yet.</p>
+        <p>No vehicles found.</p>
     <?php else: ?>
-        <table>
+        <table class="vehicle-table">
             <tr>
+                <th>Image</th>
                 <th>Make</th>
                 <th>Model</th>
                 <th>Year</th>
                 <th>Mileage</th>
-                <th>Actions</th>
+                <th>Dealership</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
             </tr>
 
             <?php foreach ($vehicles as $vehicle): ?>
                 <tr>
-                    <td><?= htmlspecialchars($vehicle['Make']) ?></td>
+                    <td>
+                        <img src="uploads/<?= htmlspecialchars($vehicle['image'] ?: 'ph.jpg') ?>"
+                             class="vehicle-thumbnail">
+                    </td>
+
+                    <td>
+                        <a href="vehicle_details.php?id=<?= $vehicle['id'] ?>">
+                            <?= htmlspecialchars($vehicle['Make']) ?>
+                        </a>
+                    </td>
+
                     <td><?= htmlspecialchars($vehicle['Model']) ?></td>
                     <td><?= htmlspecialchars($vehicle['Year']) ?></td>
-                    <td><?= htmlspecialchars($vehicle['Mileage']) ?></td>
+
                     <td>
-                        <a href="update_vehicle.php?make=<?= urlencode($vehicle['Make']) ?>&model=<?= urlencode($vehicle['Model']) ?>&year=<?= $vehicle['Year'] ?>&mileage=<?= $vehicle['Mileage'] ?>">Edit</a>
-                        |
-                        <form action="delete_vehicle.php" method="post" style="display:inline;">
-                            <input type="hidden" name="make" value="<?= htmlspecialchars($vehicle['Make']) ?>">
-                            <input type="hidden" name="model" value="<?= htmlspecialchars($vehicle['Model']) ?>">
-                            <input type="hidden" name="year" value="<?= htmlspecialchars($vehicle['Year']) ?>">
-                            <input type="hidden" name="mileage" value="<?= htmlspecialchars($vehicle['Mileage']) ?>">
-                            <input type="submit" value="Delete" onclick="return confirm('Are you sure you want to delete this vehicle?');">
+                        <?php
+                            $m = (float) str_replace(',', '', $vehicle['Mileage']);
+                            echo number_format($m) . " km";
+                        ?>
+                    </td>
+
+                    <td><?= htmlspecialchars($vehicle['dealership_name'] ?: 'Not assigned') ?></td>
+
+                    <td>
+                        <form action="update_vehicle_form.php" method="get">
+                            <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
+                            <input type="submit" value="Edit">
+                        </form>
+                    </td>
+
+                    <td>
+                        <form action="delete_vehicle.php" method="post">
+                            <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
+                            <input type="submit" value="Delete"
+                                   onclick="return confirm('Delete this vehicle?');">
                         </form>
                     </td>
                 </tr>
@@ -68,5 +99,6 @@ $statement->closeCursor();
 </main>
 
 <?php include("footer.php"); ?>
+
 </body>
 </html>

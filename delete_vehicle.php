@@ -1,35 +1,50 @@
-<?php
-session_start();
-require_once('database.php');
+    require_once('database.php');
 
-$make = filter_input(INPUT_POST, 'make');
-$model = filter_input(INPUT_POST, 'model');
-$year = filter_input(INPUT_POST, 'year', FILTER_VALIDATE_INT);
-$mileage = filter_input(INPUT_POST, 'mileage', FILTER_VALIDATE_INT);
+    // get data from the form
+    $contact_id = filter_input(INPUT_POST, 'contact_id', FILTER_VALIDATE_INT);
+    
+    // Get current contact record to check current image name
+    $queryContacts = '
+        SELECT contactID, firstName, lastName, emailAddress, phoneNumber, status, dob, imageName FROM contacts WHERE contactID = :contact_id';
 
-if ($make == null || $model == null || $year == null || $mileage == null) {
-    $_SESSION["delete_error"] = "Invalid vehicle reference.";
-    header("Location: index.php");
-    exit;
-}
+    $statement = $db->prepare($queryContacts);
+    $statement->bindValue(':contact_id', $contact_id);
+    $statement->execute();
+    $contact = $statement->fetch();
+    $statement->closeCursor();
 
-$query = 'DELETE FROM vehicles 
-          WHERE Make = :make 
-          AND Model = :model 
-          AND Year = :year 
-          AND Mileage = :mileage';
+    $old_image_name = $contact['imageName'];
+    $base_dir = 'images/';
 
-$statement = $db->prepare($query);
-$statement->execute([
-    ':make' => $make,
-    ':model' => $model,
-    ':year' => $year,
-    ':mileage' => $mileage
-]);
-$statement->closeCursor();
+    if($old_image_name != 'placeholder_100.jpg') {
+            $old_base = substr($old_image_name, 0, strrpos($old_image_name, '_100'));
+            $old_ext = substr($old_image_name,strrpos($old_image_name, '.'));
+            $original = $old_base . $old_ext;
+            $img100 = $old_base . '_100' . $old_ext;
+            $img400 = $old_base . '_400' . $old_ext;
 
-$_SESSION["delete_success"] = "Vehicle deleted successfully.";
+            foreach([$original, $img100, $img400] as $file) {
+                $path = $base_dir . $file;
+                if(file_exists($path)) {
+                    unlink($path);
+                }
+            }
+        }
 
-header("Location: delete_vehicle_confirmation.php");
-exit;
+    if ($contact_id != false) {
+        // delete the contact from the database
+        $query = 'DELETE FROM contacts WHERE contactID = :contact_id';
+
+        $statement = $db->prepare($query);
+        $statement->bindValue(':contact_id', $contact_id);
+
+        $statement->execute();
+        $statement->closeCursor();
+    }
+
+    // reload the index page
+    $url = "index.php";
+    header("Location: " . $url);
+    die();
+
 ?>

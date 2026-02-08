@@ -1,6 +1,16 @@
 <?php
 session_start();
 require_once 'database.php';
+
+// Fetch all dealerships for the dropdown
+try {
+    $stmt = $db->prepare("SELECT id, name, city FROM dealerships ORDER BY name");
+    $stmt->execute();
+    $dealerships = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $dealerships = [];
+    error_log("Error fetching dealerships: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -20,12 +30,12 @@ require_once 'database.php';
 
     <?php if (!empty($_SESSION['add_error'])): ?>
         <p style="color:red;">
-            <?= $_SESSION['add_error']; ?>
+            <?= htmlspecialchars($_SESSION['add_error']); ?>
         </p>
         <?php unset($_SESSION['add_error']); ?>
     <?php endif; ?>
 
-    <form action="add_vehicle.php" method="post" id="add_vehicle_form">
+    <form action="add_vehicle.php" method="post" id="add_vehicle_form" enctype="multipart/form-data">
 
         <div id="data">
 
@@ -40,6 +50,19 @@ require_once 'database.php';
 
             <label>Mileage:</label>
             <input type="number" name="mileage" required><br>
+
+            <label>Dealership:</label>
+            <select name="dealership_id" required>
+                <option value="">-- Select Dealership --</option>
+                <?php foreach ($dealerships as $dealership): ?>
+                    <option value="<?= $dealership['id'] ?>">
+                        <?= htmlspecialchars($dealership['name']) ?> (<?= htmlspecialchars($dealership['city']) ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select><br>
+
+            <label>Vehicle Image:</label>
+            <input type="file" name="vehicle_image" accept="image/*"><br>
 
         </div>
 
