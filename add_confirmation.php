@@ -1,30 +1,36 @@
 <?php
-    session_start();   
-?>
+session_start();
 
+// Redirect to login if user is not logged in
+if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== TRUE) {
+    header("Location: login_form.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <title>Vehicle Manager - Add Vehicle Confirmation</title>
-        <link rel="stylesheet" type="text/css" href="css/vehicle.css" />
-    </head>
+<head>
+    <title>Vehicle Manager - Add Vehicle Confirmation</title>
+    <link rel="stylesheet" type="text/css" href="css/vehicle.css" />
+</head>
 
-    <body>
-        <?php include("header.php"); ?>
+<body>
 
-        <main>
-            <h2>Add Vehicle Confirmation</h2>
-            <p>
-                Thank you for adding a new vehicle to the inventory.
-                The vehicle information has been saved successfully.
-            </p>                        
+<?php include("header.php"); ?>
 
-            <p><a href="index.php">Back to Home</a></p>
+<main>
+    <h2>Add Vehicle Confirmation</h2>
 
-        </main>
+    <p>
+        Thank you for adding a new vehicle to the inventory.
+        The vehicle information has been saved successfully.
+    </p>
 
-        <?php include("footer.php"); ?> 
+    <p><a href="index.php">Back to Home</a></p>
+</main>
 
-    </body>
+<?php include("footer.php"); ?>
+
+</body>
 </html>

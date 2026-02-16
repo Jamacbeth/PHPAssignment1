@@ -1,5 +1,12 @@
 <?php
 session_start();
+
+// Redirect to login if user is not logged in
+if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== TRUE) {
+    header("Location: login_form.php");
+    exit;
+}
+
 require_once 'database.php';
 
 // Fetch all dealerships for the dropdown
@@ -12,7 +19,6 @@ try {
     error_log("Error fetching dealerships: " . $e->getMessage());
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +35,7 @@ try {
     <h2>Add Vehicle</h2>
 
     <?php if (!empty($_SESSION['add_error'])): ?>
-        <p style="color:red;">
+        <p class="error-message">
             <?= htmlspecialchars($_SESSION['add_error']); ?>
         </p>
         <?php unset($_SESSION['add_error']); ?>
