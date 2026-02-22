@@ -28,7 +28,8 @@ $statement->closeCursor();
 <head>
     <meta charset="UTF-8">
     <title>Vehicle Inventory - Home</title>
-    <link rel="stylesheet" type="text/css" href="css/vehicle.css">
+    <link rel="stylesheet" type="text/css" href="css/global.css">
+ 
 </head>
 <body>
 
@@ -85,14 +86,14 @@ $statement->closeCursor();
                     <td>
                         <form action="update_vehicle_form.php" method="get">
                             <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
-                            <input type="submit" value="Edit">
+                            <input type="submit" class="btn secondary" value="Edit">
                         </form>
                     </td>
 
                     <td>
                         <form action="delete_vehicle.php" method="post">
                             <input type="hidden" name="id" value="<?= $vehicle['id'] ?>">
-                            <input type="submit" value="Delete"
+                            <input type="submit" class="btn danger" value="Delete"
                                    onclick="return confirm('Delete this vehicle?');">
                         </form>
                     </td>
@@ -101,7 +102,12 @@ $statement->closeCursor();
         </table>
     <?php endif; ?>
 
-    <p><a href="add_vehicle_form.php">Add New Vehicle</a></p>
+    <div class="home-buttons">
+        <a class="btn home-btn" href="add_vehicle_form.php">Add New Vehicle</a>
+        <a class="btn home-btn" href="sell_vehicle_form.php">Sell Your Vehicle</a>
+        <a class="btn home-btn" href="financing_form.php">Apply for Financing</a>
+    </div>
+
 </main>
 
 <?php include("footer.php"); ?>

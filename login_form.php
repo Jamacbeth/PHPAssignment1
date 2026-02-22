@@ -6,8 +6,8 @@
 
 <head>
     <title>Car Manager - Login</title>
-    <link rel="stylesheet" type="text/css" href="css/contact.css" />
-</head>
+  <link rel="stylesheet" type="text/css" href="css/global.css">
+
 
 <body>
     <?php include("header.php"); ?>

@@ -6,7 +6,8 @@
 
 <head>
     <title>Car Manager - Registration Confirmation</title>
-    <link rel="stylesheet" type="text/css" href="css/contact.css" />
+<link rel="stylesheet" type="text/css" href="css/global.css">
+
 </head>
 
 <body>

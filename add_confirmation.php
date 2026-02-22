@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Redirect to login if user is not logged in
+
 if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== TRUE) {
     header("Location: login_form.php");
     exit;
@@ -12,7 +12,8 @@ if (!isset($_SESSION['isLoggedIn']) || $_SESSION['isLoggedIn'] !== TRUE) {
 
 <head>
     <title>Vehicle Manager - Add Vehicle Confirmation</title>
-    <link rel="stylesheet" type="text/css" href="css/vehicle.css" />
+   <link rel="stylesheet" type="text/css" href="css/global.css">
+
 </head>
 
 <body>

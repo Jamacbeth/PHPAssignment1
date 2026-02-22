@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once('database.php');
+<link rel="stylesheet" type="text/css" href="css/global.css">
 
 // Get form inputs
 $userName = filter_input(INPUT_POST, 'userName');

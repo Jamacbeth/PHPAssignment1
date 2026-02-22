@@ -3,6 +3,7 @@ session_start();
 date_default_timezone_set("America/Toronto");
 
 require_once('database.php');
+<link rel="stylesheet" type="text/css" href="css/global.css">
 
 // These MUST match your form input names
 $user_name = filter_input(INPUT_POST, 'userName');
@@ -52,10 +53,10 @@ if ($user) {
         $statement->execute();
         $statement->closeCursor();
 
-        // Set session variables
+        // Set session variables (FIXED userID key)
         $_SESSION['isLoggedIn'] = TRUE;
         $_SESSION['userName'] = $user['userName'];
-        $_SESSION['user_id'] = $user['userID'];
+        $_SESSION['userID'] = $user['userID'];   // ← FIXED
 
         header("Location: login_confirmation.php");
         exit;

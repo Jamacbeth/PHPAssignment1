@@ -7,7 +7,8 @@
 
     <head>
         <title>Vehicle Manager - Update Vehicle Confirmation</title>
-        <link rel="stylesheet" type="text/css" href="css/vehicle.css" />
+      <link rel="stylesheet" type="text/css" href="css/global.css">
+
     </head>
 
     <body>

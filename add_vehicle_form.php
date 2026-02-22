@@ -24,7 +24,8 @@ try {
 <head>
     <meta charset="UTF-8">
     <title>Add Vehicle</title>
-    <link rel="stylesheet" type="text/css" href="css/vehicle.css">
+    <link rel="stylesheet" type="text/css" href="css/global.css">
+
 </head>
 
 <body>
